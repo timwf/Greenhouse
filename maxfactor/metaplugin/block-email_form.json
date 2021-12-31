@@ -1,0 +1,32 @@
+{
+    "id": "email_form",
+    "title": "Email form",
+    "context": "normal",
+    "screen": [],
+    "fields": [
+        {
+            "id": "title",
+            "datatype": "text",
+            "label": "Form title",
+            "options": {
+                "placeholder": "The title for this section"
+            }
+        },
+        {
+            "id": "headline",
+            "datatype": "text",
+            "label": "Form headline",
+            "options": {
+                "placeholder": "Attention grabbing headline"
+            }
+        },
+        {
+            "id": "form_fields",
+            "datatype": "textarea",
+            "label": "Form fields",
+            "options": {
+                "placeholder": "Example: type~name~class~label|type~name~class~label"
+            }
+        }
+    ]
+}

@@ -1,0 +1,64 @@
+{
+    "id": "intro_cta",
+    "title": "Intro CTA",
+    "context": "normal",
+    "screen": [],
+    "fields": [
+        {
+            "id": "title",
+            "datatype": "text",
+            "label": "Title",
+            "options": {
+                "placeholder": "Enter the main title"
+            }
+        }, {
+            "id": "image",
+            "datatype": "media",
+            "label": "Background Image",
+            "options": {
+                "placeholder": "Select a background image"
+            }
+        }, {
+            "id": "cta_label",
+            "datatype": "text",
+            "label": "Main Call to action",
+            "options": {
+                "placeholder": "Text displayed as the main button label"
+            }
+        }, {
+            "id": "cta_url",
+            "datatype": "link",
+            "label": "Main CTA URL",
+            "options": {
+                "placeholder": "The target URL for the button"
+            }
+        }, {
+            "id": "cta_label_alt",
+            "datatype": "text",
+            "label": "Alternative Call to action",
+            "options": {
+                "placeholder": "Text displayed as the alternative button label"
+            }
+        }, {
+            "id": "cta_url_alt",
+            "datatype": "link",
+            "label": "Alternative CTA URL",
+            "options": {
+                "placeholder": "The target URL for the button"
+            }
+        }, {
+            "id": "cta_label_alt2",
+            "datatype": "text",
+            "label": "Secondary alternative Call to action",
+            "options": {
+                "placeholder": "Text displayed as the secondary alternative button label"
+            }
+        }, {
+            "id": "cta_url_alt2",
+            "datatype": "link",
+            "label": "Secondary alternative CTA URL",
+            "options": {
+                "placeholder": "The target URL for the button"
+            }
+        }]
+}

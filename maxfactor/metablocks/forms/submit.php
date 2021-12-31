@@ -1,0 +1,1 @@
+<input name="<?php echo $field[1]; ?>" type="submit" value="<?php echo $field[3]; ?>">

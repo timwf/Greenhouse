@@ -1,0 +1,13 @@
+[
+        {
+    "id": "pc_blocks",
+    "title": "Content Blocks",
+    "repeater": true,
+    "context": "normal",
+    "screen": ["page"],
+    "aliases": {
+        "post_slider": "Post Slider",
+        "quote": "Quote",
+        "email_form": "Email form"
+    }
+}]

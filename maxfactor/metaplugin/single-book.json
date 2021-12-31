@@ -1,0 +1,104 @@
+[
+        {
+    "id": "extras",
+    "title": "Extras",
+    "context": "normal",
+    "screen": ["book"],
+    "fields": [{
+        "id": "author_slug",
+        "datatype": "link",
+        "label": "Author",
+        "required": false,
+        "options": {
+            "placeholder": "Author"
+        }
+    }, {
+        "id": "blurb",
+        "datatype": "textarea",
+        "label": "Blurb",
+        "required": false,
+        "options": {
+            "placeholder": "Blurb"
+        }
+    }, {
+        "id": "rights_details",
+        "datatype": "textarea",
+        "label": "Rights Details",
+        "required": false,
+        "options": {
+            "placeholder": "Rights Details"
+        }
+    }, {
+        "id": "amazon_us",
+        "datatype": "link",
+        "label": "US Amazon Link",
+        "required": false,
+        "options": {
+            "placeholder": "US Amazon Link"
+        }
+    }, {
+        "id": "amazon_uk",
+        "datatype": "link",
+        "label": "UK Amazon Link",
+        "required": false,
+        "options": {
+            "placeholder": "UK Amazon Link"
+        }
+    }, {
+        "id": "jacket_us",
+        "datatype": "media",
+        "label": "US Jacket Image",
+        "required": false,
+        "options": {
+            "placeholder": "US Jacket Image"
+        }
+    }, {
+        "id": "jacket_uk",
+        "datatype": "media",
+        "label": "UK Jacket Image",
+        "required": false,
+        "options": {
+            "placeholder": "UK Jacket Image"
+        }
+    }, {
+        "id": "series_status",
+        "datatype": "text",
+        "label": "Series Status",
+        "required": false,
+        "options": {
+            "placeholder": "Series Status"
+        }
+    }, {
+        "id": "series",
+        "datatype": "number",
+        "label": "Series",
+        "required": false,
+        "options": {
+            "placeholder": "Series"
+        }
+    }, {
+        "id": "series_order",
+        "datatype": "number",
+        "label": "Order in Series",
+        "required": false,
+        "options": {
+            "placeholder": "Order in Series"
+        }
+    }, {
+        "id": "catalogue_status",
+        "datatype": "text",
+        "label": "Catalogue Status",
+        "required": false,
+        "options": {
+            "placeholder": "Catalogue Status"
+        }
+    }, {
+        "id": "homepage_carousel",
+        "datatype": "checkbox",
+        "label": "Homepage Carousel",
+        "required": false,
+        "options": {
+            "placeholder": "Homepage Carousel"
+        }
+    }]
+}]

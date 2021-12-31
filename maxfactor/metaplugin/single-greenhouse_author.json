@@ -1,0 +1,41 @@
+[
+        {
+    "id": "extras",
+    "title": "Extras",
+    "context": "normal",
+    "screen": ["greenhouse_author"],
+    "fields": [{
+        "id": "first_name",
+        "datatype": "text",
+        "label": "First Name",
+        "required": false,
+        "options": {
+            "placeholder": "First Name"
+        }
+    }, {
+        "id": "last_name",
+        "datatype": "text",
+        "label": "Last Name",
+        "required": false,
+        "options": {
+            "placeholder": "Last Name"
+        }
+    }, {
+        "id": "display_back_catalogue",
+        "datatype": "checkbox",
+        "label": "Display Back Catalogue",
+        "required": false,
+        "options": {
+            "placeholder": "Display Back Catalogue"
+        }
+    }, {
+        "id": "interview",
+        "datatype": "textarea",
+        "label": "Interview",
+        "required": false,
+        "options": {
+            "placeholder": "Interview"
+        }
+    }]
+}
+]

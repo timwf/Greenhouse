@@ -1,0 +1,29 @@
+{
+    "id": "logo_reel",
+    "title": "Logo Reel",
+    "context": "normal",
+    "screen": [],
+    "fields": [
+        {
+            "id": "title",
+            "datatype": "text",
+            "label": "Reel title",
+            "options": {
+                "placeholder": "Enter the title of this reel"
+            }
+        }, {
+            "id": "headline",
+            "datatype": "text",
+            "label": "Reel headline",
+            "options": {
+                "placeholder": "A large headline for this reel"
+            }
+        }, {
+            "id": "logos",
+            "datatype": "media",
+            "label": "Logos",
+            "options": {
+                "placeholder": "Select logos to include in the reel"
+            }
+        }]
+}

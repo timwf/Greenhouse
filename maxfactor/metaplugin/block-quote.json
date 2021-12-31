@@ -1,0 +1,29 @@
+{
+    "id": "quote",
+    "title": "Quote",
+    "context": "normal",
+    "screen": [],
+    "fields": [
+        {
+            "id": "title",
+            "datatype": "text",
+            "label": "Quote title",
+            "options": {
+                "placeholder": "Enter the title"
+            }
+        }, {
+            "id": "quote",
+            "datatype": "text",
+            "label": "Quote",
+            "options": {
+                "placeholder": "The quotation (do not enter quote marks)"
+            }
+        }, {
+            "id": "author",
+            "datatype": "media",
+            "label": "Author",
+            "options": {
+                "placeholder": "The author of the quote"
+            }
+        }]
+}

@@ -1,0 +1,17 @@
+[
+        {
+    "id": "pc_blocks",
+    "title": "Content Blocks",
+    "repeater": true,
+    "context": "normal",
+    "screen": ["page"],
+    "aliases": {
+        "intro_cta": "Intro CTA",
+        "three_facts": "Three Facts",
+        "category_intro": "Category Introduction",
+        "post_slider": "Post Slider",
+        "logo_reel": "Logo Reel",
+        "quote": "Quote",
+        "email_form": "Email form"
+    }
+}]

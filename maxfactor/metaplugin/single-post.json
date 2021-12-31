@@ -1,0 +1,18 @@
+[
+        {
+    "id": "additional_settings",
+    "title": "Additional Settings",
+    "context": "side",
+    "fields": 
+    [
+        {
+    "id": "as_priority",
+    "datatype": "text",
+    "label": "Post Priority",
+    "required": false,
+    "options": {
+        "placeholder": "Enter a numeric priority",
+        "value": "50"
+    }
+}    ]
+}]

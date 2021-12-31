@@ -1,0 +1,478 @@
+###########################
+# MaxFactor Wordpress HTA #
+###########################
+
+###############################
+# Domain settings #
+###############################
+
+<IfModule mod_rewrite.c>
+    RewriteEngine on
+    ### Force www
+    RewriteCond %{HTTP_HOST} !^$
+    RewriteCond %{HTTP_HOST} !^www\. [NC]
+    RewriteCond %{HTTPS}s ^on(s)|
+    RewriteRule ^ http%1://www.%{HTTP_HOST}%{REQUEST_URI} [R=301,L]
+    ### force non-www 
+    # RewriteCond %{HTTP_HOST} ^www\.
+    # RewriteCond %{HTTPS}s ^on(s)|off
+    # RewriteCond http%1://%{HTTP_HOST} ^(https?://)(www\.)?(.+)$
+    # RewriteRule ^ %1%3%{REQUEST_URI} [R=301,L]
+</IfModule>
+############
+# Security #
+############
+
+### Recognise SSL when set at a load balancer/proxy level (for CloudFlare)
+    SetEnvIf X-Forwarded-Proto https HTTPS=on
+
+### Prevent wp-config.php from being loaded:
+<files wp-config.php>
+    Order allow,deny
+    Deny from all
+</files>
+
+### Protect .htaccess
+<Files ~ "^.*\.([Hh][Tt][Aa])">
+    Order allow,deny
+    Deny from all
+    Satisfy all
+</Files>
+
+### Secure wp-includes
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteBase /
+    RewriteRule ^wp-admin/includes/ - [F,L]
+    RewriteRule !^wp-includes/ - [S=3]
+    RewriteRule ^wp-includes/[^/]+\.php$ - [F,L]
+    RewriteRule ^wp-includes/js/tinymce/langs/.+\.php - [F,L]
+    RewriteRule ^wp-includes/theme-compat/ - [F,L]
+</IfModule>
+
+### Prevent directory browsing
+<IfModule mod_autoindex.c>
+    Options -Indexes
+</IfModule>
+
+### Prevent this htaccess from being accessed:
+<files htaccess>
+    Order allow,deny
+    Deny from all
+</files>
+
+### Prevent WordPress' readme.html from being accessed (as it contains the version number)
+<files readme.html>
+    Deny from all
+</files>
+
+### Disable HTTP Trace
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteCond %{REQUEST_METHOD} ^TRACE
+    RewriteRule .* - [F]
+</IfModule>
+
+### Block access to hidden files & directories
+<IfModule mod_rewrite.c>
+    RewriteCond %{SCRIPT_FILENAME} -d [OR]
+    RewriteCond %{SCRIPT_FILENAME} -f
+    RewriteRule "(^|/)\." - [F]
+</IfModule>
+
+### Block access to source files
+<FilesMatch "(^#.*#|\.(bak|config|dist|fla|inc|ini|log|psd|sh|sql|sw[op])|~)$">
+    Order allow,deny
+    Deny from all
+    Satisfy All
+</FilesMatch>
+
+### Force secure URL if available
+<IfModule mod_rewrite.c>
+    RewriteCond %{HTTPS} off
+    RewriteCond %{HTTP:X-Forwarded-Proto} !https
+    RewriteRule (.*) https://%{HTTP_HOST}%{REQUEST_URI} [R=301,L]
+</IfModule>
+
+<IfModule mod_headers.c>
+    Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains"
+</IfModule>
+##############################
+# Default Wordpress Settings #
+##############################
+
+# BEGIN WordPress
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteBase /
+    ### SQL Injection Protection
+    RewriteCond %{QUERY_STRING} (\<|%3C).*script.*(\>|%3E) [NC,OR]
+    RewriteCond %{QUERY_STRING} GLOBALS(=|\[|\%[0-9A-Z]{0,2}) [OR]
+    RewriteCond %{QUERY_STRING} _REQUEST(=|\[|\%[0-9A-Z]{0,2})
+    RewriteRule ^(.*)$ index.php [F,L]
+    ### End SQL Injection Protection
+    RewriteRule ^index\.php$ - [L]
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule . /index.php [L]
+</IfModule>
+
+# END WordPress
+#######################
+# Speed & Compression #
+#######################
+
+# BEGIN Expire headers  
+<IfModule mod_expires.c>
+    ExpiresActive On
+    ExpiresDefault "access plus 30 seconds"
+    ExpiresByType image/x-icon "access plus 2592000 seconds"
+    ExpiresByType image/jpeg "access plus 2592000 seconds"
+    ExpiresByType image/png "access plus 2592000 seconds"
+    ExpiresByType image/gif "access plus 2592000 seconds"
+    ExpiresByType application/x-shockwave-flash "access plus 2592000 seconds"
+    ExpiresByType text/css "access plus 604800 seconds"
+    ExpiresByType text/javascript "access plus 604800 seconds"
+    ExpiresByType application/javascript "access plus 604800 seconds"
+    ExpiresByType application/x-javascript "access plus 604800 seconds"
+    ExpiresByType text/html "access plus 300 seconds"
+    ExpiresByType application/xhtml+xml "access plus 600 seconds"
+    ExpiresByType application/vnd.ms-fontobject "access plus 1 year"
+    ExpiresByType application/x-font-ttf "access plus 1 year"
+    ExpiresByType application/x-font-opentype "access plus 1 year"
+    ExpiresByType application/x-font-woff "access plus 1 year"
+</IfModule>  
+# END Expire headers 
+
+<IfModule mod_headers.c>  
+    # BEGIN Cache-Control Headers  
+    <filesMatch "\.(ico|jpe?g|png|gif|swf)$">  
+        Header set Cache-Control "public"  
+    </filesMatch>  
+    <filesMatch "\.(css)$">  
+        Header set Cache-Control "public"  
+    </filesMatch>  
+    <filesMatch "\.(js)$">  
+        Header set Cache-Control "private"  
+    </filesMatch>  
+    <filesMatch "\.(x?html?|php)$">  
+        Header set Cache-Control "private, must-revalidate"  
+    </filesMatch>
+    # END Cache-Control Headers  
+</IfModule>  
+
+<IfModule mod_deflate.c>
+    # Compress HTML, CSS, JavaScript, Text, XML and fonts
+    AddOutputFilterByType DEFLATE application/javascript
+    AddOutputFilterByType DEFLATE application/rss+xml
+    AddOutputFilterByType DEFLATE application/vnd.ms-fontobject
+    AddOutputFilterByType DEFLATE application/x-font
+    AddOutputFilterByType DEFLATE application/x-font-opentype
+    AddOutputFilterByType DEFLATE application/x-font-otf
+    AddOutputFilterByType DEFLATE application/x-font-truetype
+    AddOutputFilterByType DEFLATE application/x-font-ttf
+    AddOutputFilterByType DEFLATE application/x-font-woff
+    AddOutputFilterByType DEFLATE application/x-javascript
+    AddOutputFilterByType DEFLATE application/xhtml+xml
+    AddOutputFilterByType DEFLATE application/xml
+    AddOutputFilterByType DEFLATE font/opentype
+    AddOutputFilterByType DEFLATE font/otf
+    AddOutputFilterByType DEFLATE font/ttf
+    AddOutputFilterByType DEFLATE image/svg+xml
+    AddOutputFilterByType DEFLATE image/x-icon
+    AddOutputFilterByType DEFLATE text/css
+    AddOutputFilterByType DEFLATE text/html
+    AddOutputFilterByType DEFLATE text/javascript
+    AddOutputFilterByType DEFLATE text/plain
+    AddOutputFilterByType DEFLATE text/xml
+    
+    # Remove browser bugs (only needed for really old browsers)
+    BrowserMatch ^Mozilla/4 gzip-only-text/html
+    BrowserMatch ^Mozilla/4\.0[678] no-gzip
+    BrowserMatch \bMSIE !no-gzip !gzip-only-text/html
+    Header append Vary User-Agent
+</IfModule> 
+
+#Remove the ETag header
+Header unset ETag 
+FileETag None  
+
+#######################
+# File Format Support #
+#######################
+
+### Add support for SVG and HTC
+AddType image/svg+xml svg svgz
+AddEncoding gzip svgz
+AddType text/x-component .htc
+
+### Fonts
+AddType application/vnd.ms-fontobject .eot 
+AddType application/x-font-ttf .ttf
+AddType application/x-font-opentype .otf
+AddType application/x-font-woff .woff
+
+########################
+# Manual 301 Redirects #
+########################
+
+redirect 301 /index.php/blog /blog/latest-posts/
+redirect 301 /index.php/news /
+redirect 301 /index.php/awards /
+redirect 301 /index.php/site/funny_prize /greenhouse-prize/
+redirect 301 /index.php/site/publishers /
+redirect 301 /index.php/site/top_tips /
+redirect 301 /index.php/site/how_to_submit /
+redirect 301 /index.php/site/what_we_are_doing /
+redirect 301 /index.php/site/what_we_offer /
+redirect 301 /index.php/authors/ /authors/
+redirect 301 /index.php/site/authors /authors/
+redirect 301 /index.php/site/rights_and_licensing /question/category/rights-licensing/
+redirect 301 /index.php/books/ /books/
+redirect 301 /index.php/site/contact_us /contact/
+redirect 301 /index.php/site/about /the-team/
+redirect 301 /index.php/site/faq /question-answers/
+redirect 301 /index.php/www.kirkusreviews.com/lists/11-teen-titles-you-dont-want-miss-summer/all-we-have-left/ /
+redirect 301 /index.php/authors/profile/arno_r/ /authors/ronni-arno/
+redirect 301 /index.php/authors/profile/aronson_s/ /authors/sarah-aronson/
+redirect 301 /index.php/authors/profile/bassett_k/ /authors/kate-bassett/
+redirect 301 /index.php/authors/profile/beacham_janine/ /authors/janine-beacham/
+redirect 301 /index.php/authors/profile/bertagna_j/ /authors/julie-bertagna/
+redirect 301 /index.php/authors/profile/bell_j/ /authors/jennifer-bell/
+redirect 301 /index.php/authors/profile/brockenbrough_m/ /authors/martha-brockenbrough/
+redirect 301 /index.php/authors/profile/carlson_c/ /authors/caroline-carlson/
+redirect 301 /index.php/authors/profile/chadda_s/ /authors/sarwat-chadda/
+redirect 301 /index.php/authors/profile/conkling_w/ /authors/winifred-conkling/
+redirect 301 /index.php/authors/profile/cooner_d/ /authors/donna-cooner/
+redirect 301 /index.php/authors/profile/cosimano_e/ /authors/elle-cosimano/
+redirect 301 /index.php/authors/profile/decamp_a/ /authors/alison-decamp/
+redirect 301 /index.php/authors/profile/diaz_a/ /authors/alexandra-diaz/
+redirect 301 /index.php/authors/profile/eagar_lindsay/ /authors/lindsay-eagar/
+redirect 301 /index.php/authors/profile/gangsei_jan/ /authors/jan-gangsei/
+redirect 301 /index.php/authors/profile/goodwin_h/ /authors/harriet-goodwin/
+redirect 301 /index.php/authors/profile/grogan_s/ /authors/shannon-grogan/
+redirect 301 /index.php/authors/profile/harris_t/ /authors/teresa-harris/
+redirect 301 /index.php/authors/profile/hathaway_j/ /authors/jill-hathaway/
+redirect 301 /index.php/authors/profile/humphries_j/ /authors/jessie-humphries/
+redirect 301 /index.php/authors/profile/keller_tae/ /authors/tae-keller/
+redirect 301 /index.php/authors/profile/khan_joshua/ /authors/joshua-khan/
+redirect 301 /index.php/authors/profile/leavitt_l/ /authors/lindsey-leavitt/
+redirect 301 /index.php/authors/profile/lewis_brown_t/ /authors/tami-brown/
+redirect 301 /index.php/authors/profile/maciejewski_mark/ /authors/mark-maciejewski/
+redirect 301 /index.php/authors/profile/mills_wendy/ /authors/wendy-mills/
+redirect 301 /index.php/authors/profile/miranda_megan/ /authors/megan-miranda/
+redirect 301 /index.php/authors/profile/moyer_jenny/ /authors/jenny-moyer/
+redirect 301 /index.php/authors/profile/ohart_sinead/ /authors/sinead-ohart/
+redirect 301 /index.php/authors/profile/oreilly_jane/ /authors/jane-oreilly/
+redirect 301 /index.php/authors/profile/puckett_g/ /authors/gavin-puckett/
+redirect 301 /index.php/authors/profile/roberts_j3/ /authors/jeyn-roberts/
+redirect 301 /index.php/authors/profile/schusterman_m/ /authors/michelle-schusterman/
+redirect 301 /index.php/authors/profile/springstubb_t/ /authors/tricia-springstubb/
+redirect 301 /index.php/authors/profile/stout_s/ /authors/shawn-stout/
+redirect 301 /index.php/authors/profile/stowell_louie/ /authors/louie-stowell/
+redirect 301 /index.php/authors/profile/tims_l/ /authors/laura-tims/
+redirect 301 /index.php/authors/profile/woods_matilda/ /authors/matilda-woods/
+redirect 301 /index.php/authors/profile/yeh_k/ /authors/kat-yeh/
+redirect 301 /index.php/authors/profile/amy_holder/ /
+redirect 301 /index.php/authors/profile/elston_a/ /
+redirect 301 /index.php/authors/profile/haddow_swapna/ /
+redirect 301 /index.php/authors/profile/hoole_e/ /
+redirect 301 /index.php/authors/profile/kurtagich_dawn/ /
+redirect 301 /index.php/authors/profile/lickens_alice/ /
+redirect 301 /index.php/authors/profile/linka_c/ /
+redirect 301 /index.php/authors/profile/mayhew_j/ /
+redirect 301 /index.php/authors/profile/mccarthy_c/ /
+redirect 301 /index.php/authors/profile/metcalf_dawn/ /
+redirect 301 /index.php/authors/profile/obrien_a/ /
+redirect 301 /index.php/authors/profile/omololu_cj/ /
+redirect 301 /index.php/authors/profile/patterson_v/ /
+redirect 301 /index.php/authors/profile/standish_ali/ /
+redirect 301 /index.php/authors/profile/sykes_julie/ /
+redirect 301 /index.php/authors/profile/woolston_b/ /
+redirect 301 /index.php/authors/profile/yovanoff_b/ /
+redirect 301 /index.php/authors/www.merryfates.com /
+redirect 301 /index.php/blog/article/reflecting_on_2016/ /2016/01/reflecting_on_2016/
+redirect 301 /index.php/blog/article/an_interview_with_megan_miranda_author_of_both_adult_and_ya_fiction/ /2016/06/an_interview_with_megan_miranda_author_of_both_adult_and_ya_fiction/
+redirect 301 /index.php/blog/article/sarah_aronson_talks_desserts_playing_and_rebooting_ones_writing_career/ /2015/08/sarah_aronson_talks_desserts_playing_and_rebooting_ones_writing_career/
+redirect 301 /index.php/blog/article/sarahs_quest/ /2015/06/sarahs_quest/
+redirect 301 /index.php/blog/article/beginnings/ /2015/11/beginnings/
+redirect 301 /index.php/blog/article/a_case_of_the_saggy_baggies/ /
+redirect 301 /index.php/blog/article/query_writing_a_guide_for_the_anxious/ /
+redirect 301 /index.php/blog/article/a_peach_of_an_agent/ /
+redirect 301 /index.php/blog/article/the_things_i_see_and_dont_see/ /
+redirect 301 /index.php/blog/article/query_writing_a_guide_for_the_anxious/ /
+redirect 301 /index.php/blog/article/the_naked_truth_about_submissions/ /
+redirect 301 /index.php/blog/article/the_things_i_see_and_dont_see/ /
+redirect 301 /index.php/blog/article/what_the_heck/ /
+redirect 301 /index.php/books/category/8_12_years/ /books/category/ages-8-12/
+redirect 301 /index.php/books/category/young_adult/ /books/category/young-adult/
+redirect 301 /index.php/books/category/5_8_years/ /books/category/ages-5-8/
+redirect 301 /index.php/books/category/picturebooks/ /books/category/picturebooks/
+redirect 301 /index.php/books/category/adult/ /books/category/adult/
+redirect 301 /index.php/Books/i_heart_band_3_sleepovers_solos_and_sheet_music/ /books/i_heart_band_3_sleepovers_solos_and_sheet_music/
+redirect 301 /index.php/books/series/i_heart_band/ /books/book_1_i_heart_band/
+redirect 301 /index.php/Books/a_farewell_to_charms1/ /books/a_farewell_to_charms1/
+redirect 301 /index.php/books/series/princess_for_hire/ /books/princess_for_hire/
+redirect 301 /index.php/Books/a_girl_called_fearless/ /books/a_girl_called_fearless/
+redirect 301 /index.php/books/series/penelope_crumb/ /books/penelope/
+redirect 301 /index.php/Books/going_vintage/ /books/going_vintage/
+redirect 301 /index.php/Books/sylvia_and_aki/ /books/sylvia_and_aki/
+redirect 301 /index.php/books/series/the_very_nearly_honorable_league_of_pirates/ /books/the_very_nearly_dishonorable_league_of_pirates/
+redirect 301 /index.php/Books/penelope_crumb_is_mad_at_the_moon/ /books/penelope_crumb_is_mad_at_the_moon/
+redirect 301 /index.php/Books/penelope_crumb_finds_her_luck/ /books/penelope_crumb_finds_her_luck/
+redirect 301 /index.php/authors/profile/bernard_r/ /authors/romily-bernard/
+redirect 301 /index.php/Books/the_map_of_me/ /books/the_map_of_me/
+redirect 301 /index.php/Books/the_dinosaur_tooth_fairy/ /books/the_dinosaur_tooth_fairy/
+redirect 301 /index.php/Books/the_hex_factor/ /books/the_hex_factor/
+redirect 301 /index.php/Books/my_near_death_adventures_99_true/ /books/my_near_death_adventures_99_true/
+redirect 301 /index.php/Books/black_helicopters/ /books/black_helicopters/
+redirect 301 /index.php/Books/transcendence/ /books/transcendence/
+redirect 301 /index.php/Books/summer_jackson_grown_up/ /books/summer_jackson_grown_up/
+redirect 301 /index.php/Books/dark_inside/ /books/dark_inside/
+redirect 301 /index.php/books/39_clues_mission_atomic/ /books/39_clues_mission_atomic/
+redirect 301 /index.php/books/a_girl_undone/ /books/a_girl_undone/
+redirect 301 /index.php/books/a_tiny_piece_of_sky/ /books/a_tiny_piece_of_sky/
+redirect 301 /index.php/books/all_the_missing_girls/ /books/all_the_missing_girls/
+redirect 301 /index.php/books/all_we_have_left/ /books/all_we_have_left/
+redirect 301 /index.php/Books/ash_mistry_and_the_city_of_death/ /books/ash_mistry_and_the_city_of_death/
+redirect 301 /index.php/Books/ash_mistry_and_the_savage_palace/ /books/ash_mistry_and_the_savage_palace/
+redirect 301 /index.php/books/ash_mistry_and_the_world_of_darkness1/ /books/ash_mistry_and_the_world_of_darkness1/
+redirect 301 /index.php/Books/believe/ /books/believe/
+redirect 301 /index.php/books/beyond_lucky/ /books/beyond_lucky/
+redirect 301 /index.php/Books/book_1_i_heart_band/ /books/book_1_i_heart_band/
+redirect 301 /index.php/books/book_one_dead_air/ /books/book_one_dead_air/
+redirect 301 /index.php/books/breaking_sky/ /books/breaking_sky/
+redirect 301 /index.php/Books/cant_look_away/ /books/cant_look_away/
+redirect 301 /index.php/books/cody_and_the_fountain_of_happiness/ /books/cody_and_the_fountain_of_happiness/
+redirect 301 /index.php/books/cody_and_the_heart_of_a_champion/ /books/cody_and_the_heart_of_a_champion/
+redirect 301 /index.php/books/cody_and_the_naked_eye/ /books/cody_and_the_naked_eye/
+redirect 301 /index.php/books/cody_and_the_rules_of_life/ /books/cody_and_the_rules_of_life/
+redirect 301 /index.php/Books/dark_goddess/ /books/dark_goddess/
+redirect 301 /index.php/Books/devils_kiss/ /books/devils_kiss/
+redirect 301 /index.php/Books/devine_intervention/ /books/devine_intervention/
+redirect 301 /index.php/Books/dirty_little_secrets/ /books/dirty_little_secrets/
+redirect 301 /index.php/books/dream_magic/ /books/dream_magic/
+redirect 301 /index.php/books/every_single_second/ /books/every_single_second/
+redirect 301 /index.php/Books/exodus/ /books/exodus/
+redirect 301 /index.php/Books/fiendish/ /books/fiendish/
+redirect 301 /index.php/Books/find_me/ /books/find_me/
+redirect 301 /index.php/Books/finding_bigfoot_everything_you_need_to_know_animal_planet/ /books/finding_bigfoot_everything_you_need_to_know_animal_planet/
+redirect 301 /index.php/books/fiona_finkelstein_big_time_ballerina/ /books/fiona_finkelstein_big_time_ballerina/
+redirect 301 /index.php/Books/fiona_finkelstein_meets_her_match/ /books/fiona_finkelstein_meets_her_match/
+redirect 301 /index.php/books/flashfall/ /books/flashfall/
+redirect 301 /index.php/books/fourteen_dreams/ /books/fourteen_dreams/
+redirect 301 /index.php/Books/fox_heart/ /books/fox_heart/
+redirect 301 /index.php/books/fracture/ /books/fracture/
+redirect 301 /index.php/books/from_where_i_watch_you/ /books/from_where_i_watch_you/
+redirect 301 /index.php/books/have_a_mice_flight/ /books/have_a_mice_flight/
+redirect 301 /index.php/Books/head_case/ /books/head_case/
+redirect 301 /index.php/books/hendrix_the_rocking_horse/ /books/hendrix_the_rocking_horse/
+redirect 301 /index.php/books/holding_smoke/ /books/holding_smoke/
+redirect 301 /index.php/books/hour_of_the_bees/ /books/hour_of_the_bees/
+redirect 301 /index.php/Books/hysteria/ /books/hysteria/
+redirect 301 /index.php/books/i_fartacus/ /books/i_fartacus/
+redirect 301 /index.php/Books/i_heart_band_2_friends_fugues_and_fortune_cookies/ /books/i_heart_band_2_friends_fugues_and_fortune_cookies/
+redirect 301 /index.php/Books/impostor/ /books/impostor/
+redirect 301 /index.php/books/indelible/ /books/indelible/
+redirect 301 /index.php/books/insidious/ /books/insidious/
+redirect 301 /index.php/Books/intuition/ /books/intuition/
+redirect 301 /index.php/books/invincible/ /books/invincible/
+redirect 301 /index.php/books/invisible/ /books/invisible/
+redirect 301 /index.php/books/killing_ruby_rose/ /books/killing_ruby_rose/
+redirect 301 /index.php/Books/kiss_the_morning_star/ /books/kiss_the_morning_star/
+redirect 301 /index.php/Books/laras_gift/ /books/laras_gift/
+redirect 301 /index.php/books/martians/ /books/martians/
+redirect 301 /index.php/Books/mo_wren_lost_and_found/ /books/mo_wren_lost_and_found/
+redirect 301 /index.php/books/moonpenny_island/ /books/moonpenny_island/
+redirect 301 /index.php/books/murray_the_horse/ /books/murray_the_horse/
+redirect 301 /index.php/books/my_near_death_adventures_i_almost_died_again/ /books/my_near_death_adventures_i_almost_died_again/
+redirect 301 /index.php/books/nearly_found/ /books/nearly_found/
+redirect 301 /index.php/Books/nearly_gone/ /books/nearly_gone/
+redirect 301 /index.php/books/never_apart/ /books/never_apart/
+redirect 301 /index.php/Books/of_all_the_stupid_things/ /books/of_all_the_stupid_things/
+redirect 301 /index.php/books/olive_and_the_backstage_ghost/ /books/olive_and_the_backstage_ghost/
+redirect 301 /index.php/books/oval_office_escape/ /books/oval_office_escape/
+redirect 301 /index.php/Books/paper_valentine/ /books/paper_valentine/
+redirect 301 /index.php/Books/penelope_crumb_never_forgets/ /books/penelope_crumb_never_forgets/
+redirect 301 /index.php/Books/penelope/ /books/penelope/
+redirect 301 /index.php/books/phoebe_and_digger/ /books/phoebe_and_digger/
+redirect 301 /index.php/books/please_dont_tell/ /books/please_dont_tell/
+redirect 301 /index.php/books/positivel/ /books/positivel/
+redirect 301 /index.php/Books/princess_for_hire/ /books/princess_for_hire/
+redirect 301 /index.php/books/race_to_the_bottom_of_the_sea/ /books/race_to_the_bottom_of_the_sea/
+redirect 301 /index.php/books/radioactive_how_two_brilliant_women_unwittingly_helped_to_create_the_atomic/ /books/radioactive_how_two_brilliant_women_unwittingly_helped_to_create_the_atomic/
+redirect 301 /index.php/Books/rage_within/ /books/rage_within/
+redirect 301 /index.php/books/remember_me/ /books/remember_me/
+redirect 301 /index.php/books/resisting_ruby_rose/ /books/resisting_ruby_rose/
+redirect 301 /index.php/books/ruby_reinvented/ /books/ruby_reinvented/
+redirect 301 /index.php/Books/sean_griswolds_head/ /books/sean_griswolds_head/
+redirect 301 /index.php/books/shadow_magic/ /books/shadow_magic/
+redirect 301 /index.php/Books/skinny/ /books/skinny/
+redirect 301 /index.php/books/slide/ /books/slide/
+redirect 301 /index.php/Books/soarelinor/ /books/soarelinor/
+redirect 301 /index.php/Books/sometimes_never_sometimes_always/ /books/sometimes_never_sometimes_always/
+redirect 301 /index.php/Books/soulprint/ /books/soulprint/
+redirect 301 /index.php/books/the_anatomy_of_curiosity/ /books/the_anatomy_of_curiosity/
+redirect 301 /index.php/books/the_big_move/ /books/the_big_move/
+redirect 301 /index.php/Books/the_bodies_we_wear/ /books/the_bodies_we_wear/
+redirect 301 /index.php/books/the_bonehill_curse/ /books/the_boy_who_fell_down_exit_43/
+redirect 301 /index.php/Books/the_boy_who_fell_down_exit_43/ /books/the_buccaneers_code/
+redirect 301 /index.php/books/the_chapel_wars/ /books/the_chapel_wars/
+redirect 301 /index.php/Books/the_color_of_rain/ /books/the_color_of_rain/
+redirect 301 /index.php/books/the_creeper_man/ /books/the_creeper_man/
+redirect 301 /index.php/books/the_crooked_sixpence/ /books/the_crooked_sixpence/
+redirect 301 /index.php/Books/the_curse_of_gravenhunger/ /books/the_curse_of_gravenhunger/
+redirect 301 /index.php/books/the_dead_house/ /books/the_dead_house/
+redirect 301 /index.php/books/the_ethan_i_was_before/ /books/the_ethan_i_was_before/
+redirect 301 /index.php/Books/the_freak_observer/ /books/the_freak_observer/
+redirect 301 /index.php/books/the_game_of_love_and_death/ /books/the_game_of_love_and_death/
+redirect 301 /index.php/Books/the_hex_factor_dark_tide/ /books/the_hex_factor_dark_tide/
+redirect 301 /index.php/books/the_memory_jar/ /books/the_memory_jar/
+redirect 301 /index.php/Books/the_merry_sisters_of_fate/ /books/the_merry_sisters_of_fate/
+redirect 301 /index.php/books/the_pages_between_us/ /books/the_pages_between_us/
+redirect 301 /index.php/books/the_perfect_place/ /books/the_perfect_place/
+redirect 301 /index.php/Books/the_replacement/ /books/the_replacement/
+redirect 301 /index.php/Books/the_royal_treatment/ /books/the_royal_treatment/
+redirect 301 /index.php/books/the_rules_for_breaking/ /books/the_rules_for_breaking/
+redirect 301 /index.php/Books/the_rules_for/ /books/the_rules_for/
+redirect 301 /index.php/books/the_safest_lies/ /books/the_safest_lies/
+redirect 301 /index.php/books/the_science_of_breakable_things/ /books/the_science_of_breakable_things/
+redirect 301 /index.php/books/the_secret_of_goldenrod/ /books/the_secret_of_goldenrod/
+redirect 301 /index.php/Books/the_space_between/ /books/the_space_between/
+redirect 301 /index.php/books/the_suffering_tree/ /books/the_suffering_tree/
+redirect 301 /index.php/books/the_terror_of_the_southlands/ /books/the_terror_of_the_southlands/
+redirect 301 /index.php/books/the_third_twin/ /books/the_third_twin/
+redirect 301 /index.php/books/the_truth_about_twinkie_pie/ /books/the_truth_about_twinkie_pie/
+redirect 301 /index.php/Books/the_very_nearly_dishonorable_league_of_pirates/ /books/the_very_nearly_dishonorable_league_of_pirates/
+redirect 301 /index.php/books/the_worlds_greatest_detective/ /books/the_worlds_greatest_detective/
+redirect 301 /index.php/books/this_is_our_story/ /books/this_is_our_story/
+redirect 301 /index.php/books/trust_me/ /books/trust_me/
+redirect 301 /index.php/Books/vengeance/ /books/vengeance/
+redirect 301 /index.php/books/we_all_looked_up/ /
+redirect 301 /index.php/books/magic_marks_the_spot/ /
+redirect 301 /index.php/books/the_venom_of_the_scorpion/ /
+redirect 301 /index.php/books/the_wrath_of_the_lizard_lord/ /
+redirect 301 /index.php/Books/the_other_side_of_blue/ /
+redirect 301 /index.php/books/the_buccaneers_code/ /
+redirect 301 /index.php/Books/the_lipstick_laws/ /
+redirect 301 /index.php/books/the_eye_of_the_neptune/ /
+redirect 301 /index.php/Books/the_demon_collector/ /
+redirect 301 /index.php/Books/silver/ /
+redirect 301 /index.php/Books/operation_oleander/ /
+redirect 301 /index.php/Books/mortlock/ /
+redirect 301 /index.php/books/luminous/ /
+redirect 301 /index.php/Books/spies_and/ /
+redirect 301 /index.php/blog/article/query_writing_a_guide_for_the_anxious/ /
+redirect 301 /index.php/blog/article/the_naked_truth_about_submissions/ /
+redirect 301 /index.php/blog/article/the_things_i_see_and_dont_see/ /
+redirect 301 /index.php/blog/article/what_the_heck/ /
+redirect 301 /index.php/books/curse_of_the_ice_serpent/ /
+redirect 301 /index.php/books/dave_pigeon/ /
+redirect 301 /index.php/Books/gold/ /
+redirect 301 /index.php/Books/fall_guy/ /
+
+
+### REFERENCES
+### https://github.com/Creare/WP-htaccess/
+### https://github.com/phanan/htaccess
+### https://gist.github.com/kevinSuttle/6252339

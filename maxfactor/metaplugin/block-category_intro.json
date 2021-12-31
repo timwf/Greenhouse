@@ -1,0 +1,57 @@
+{
+    "id": "category_intro",
+    "title": "Category Introduction",
+    "context": "normal",
+    "screen": [],
+    "fields": [
+        {
+            "id": "category_id",
+            "datatype": "text",
+            "label": "Category ID",
+            "options": {
+                "placeholder": "The numeric ID of the category featured"
+            }
+        }, {
+            "id": "category_title",
+            "datatype": "text",
+            "label": "Category title",
+            "options": {
+                "placeholder": "Enter the title of this category"
+            }
+        }, {
+            "id": "headline",
+            "datatype": "text",
+            "label": "Headline",
+            "options": {
+                "placeholder": "Enter a 5-8 word headline"
+            }
+        }, {
+            "id": "introduction",
+            "datatype": "textarea",
+            "label": "Introduction",
+            "options": {
+                "placeholder": "Describe this section"
+            }
+        }, {
+            "id": "cta_label",
+            "datatype": "text",
+            "label": "Call to action",
+            "options": {
+                "placeholder": "Text displayed as the button label"
+            }
+        }, {
+            "id": "cta_url",
+            "datatype": "text",
+            "label": "Target URL",
+            "options": {
+                "placeholder": "The target URL for the button"
+            }
+        }, {
+            "id": "reverse",
+            "datatype": "checkbox",
+            "label": "Reversed",
+            "options": {
+                "placeholder": "The target URL for the button"
+            }
+        }]
+}

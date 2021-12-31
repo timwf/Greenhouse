@@ -1,0 +1,92 @@
+{
+    "id": "three_facts",
+    "title": "Three Facts",
+    "context": "normal",
+    "screen": [],
+    "fields": [
+        {
+            "id": "fact_one_pre",
+            "datatype": "text",
+            "label": "Fact 1 Pre text",
+            "options": {
+                "placeholder": "Enter desired value"
+            }
+        }, {
+            "id": "fact_one_value",
+            "datatype": "text",
+            "label": "Fact 1",
+            "options": {
+                "placeholder": "Enter desired value"
+            }
+        }, {
+            "id": "fact_one_post",
+            "datatype": "text",
+            "label": "Fact 1 Post text",
+            "options": {
+                "placeholder": "Enter desired value"
+            }
+        }, {
+            "id": "fact_one_link",
+            "datatype": "link",
+            "label": "Fact 1 link",
+            "options": {
+                "placeholder": "Enter a target destination"
+            }
+        }, {
+            "id": "fact_two_pre",
+            "datatype": "text",
+            "label": "Fact 2 Pre text",
+            "options": {
+                "placeholder": "Enter desired value"
+            }
+        }, {
+            "id": "fact_two_value",
+            "datatype": "text",
+            "label": "Fact 2",
+            "options": {
+                "placeholder": "Enter desired value"
+            }
+        }, {
+            "id": "fact_two_post",
+            "datatype": "text",
+            "label": "Fact 2 Post text",
+            "options": {
+                "placeholder": "Enter desired value"
+            }
+        }, {
+            "id": "fact_two_link",
+            "datatype": "link",
+            "label": "Fact 2 link",
+            "options": {
+                "placeholder": "Enter a target destination"
+            }
+        }, {
+            "id": "fact_three_pre",
+            "datatype": "text",
+            "label": "Fact 3 Pre text",
+            "options": {
+                "placeholder": "Enter desired value"
+            }
+        }, {
+            "id": "fact_three_value",
+            "datatype": "text",
+            "label": "Fact 3",
+            "options": {
+                "placeholder": "Enter desired value"
+            }
+        }, {
+            "id": "fact_three_post",
+            "datatype": "text",
+            "label": "Fact 3 Post text",
+            "options": {
+                "placeholder": "Enter desired value"
+            }
+        }, {
+            "id": "fact_three_link",
+            "datatype": "link",
+            "label": "Fact 3 link",
+            "options": {
+                "placeholder": "Enter a target destination"
+            }
+        }]
+}
