@@ -5442,4 +5442,31 @@ function runSwiper() {
         });
     });
 }
+
+
+
 //# sourceMappingURL=sourcemaps/main.js.map
+
+
+
+window.onload = function() { 
+    const container = document.querySelector('.customer-gallery__grid');      
+    var msnry = new Masonry( container, {
+        columnWidth: '.customer-gallery__grid-item',
+        itemSelector: '.customer-gallery__grid-item',
+        gutter: 0
+    });  
+
+    $('.js-print-page').on('click', function(){
+        $(this).css('display', 'none')
+        printDiv('printableArea')
+    })
+
+    function printDiv(divName) {
+        var printContents = document.getElementById(divName).innerHTML;
+        var originalContents = document.body.innerHTML;   
+        document.body.innerHTML = printContents;   
+        window.print();   
+        document.body.innerHTML = originalContents;
+    }
+}

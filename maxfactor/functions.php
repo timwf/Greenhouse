@@ -104,9 +104,9 @@ add_theme_support( 'post-formats', array( 'aside', 'gallery', 'video' ) );
 
 ?>
 <?php
-    add_theme_support( 'post-thumbnails', array( 'greenhouse_author', 'book' ) );
+    add_theme_support( 'post-thumbnails', array( 'greenhouse_author', 'book', 'illustratorsbooks', 'illustrators' ) );
 
-    add_post_type_support( 'page', 'excerpt' );
+    add_post_type_support( 'page', 'excerpt', 'thumbnail' );
 ?>
 
 <?php
@@ -120,6 +120,7 @@ function createBookPostType()
         ),
         'public' => true,
         'has_archive' => true,
+        'menu_icon'           => 'dashicons-book',
         'taxonomies' => ['book_category'],
         'rewrite' => [
                 'slug' => 'books',
@@ -216,6 +217,10 @@ add_action( 'init', 'createAuthorPostType' );
 add_action( 'pre_get_posts', 'setAuthorSortOrder' );
 
 ?>
+
+
+
+
 <?php
 
 function createAwardPostType()
@@ -226,6 +231,7 @@ function createAwardPostType()
             'singular_name' => __('Award')
         ),
         'public' => true,
+        'menu_icon'           => 'dashicons-awards',
         'has_archive' => true,
         'supports' => array('title', 'thumbnail', 'editor', 'excerpt', 'page-attributes'),
     ] );
@@ -234,7 +240,57 @@ function createAwardPostType()
 
 add_action( 'init', 'createAwardPostType' );
 
-?><?php
+?>
+
+
+
+
+
+
+
+
+
+<?php
+
+function createIllustratorsPostType()
+{
+    register_post_type('illustrators', [
+        'labels' => array(
+            'name' => __('Illustrators'),
+            'singular_name' => __('Illustrator')
+        ),
+        'public' => true,
+        'has_archive' => true,
+        'menu_icon'           => 'dashicons-admin-customizer',
+        'supports' => array('title', 'thumbnail', 'editor', 'excerpt', 'page-attributes'),
+        'rewrite' => [
+                'slug' => 'Illustrators',
+                'with_front' => true
+            ],
+    ] );
+
+}
+
+
+
+add_action( 'init', 'createIllustratorsPostType' );
+
+
+?>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<?php
 
 function createSeriesPostType()
 {
@@ -351,7 +407,8 @@ wp_enqueue_style('font', 'https://fonts.googleapis.com/css?family=Droid+Serif:40
 ?><?php
 
     // Setup theme script files
-    function maxfactor_scripts() {
+    function maxfactor_scripts() {    
+        wp_enqueue_script( 'Masonary', 'https://cdnjs.cloudflare.com/ajax/libs/masonry/3.3.0/masonry.pkgd.min.js', '', '3.5.1', false);
         wp_enqueue_script( 'main', get_template_directory_uri() . '/main.js',false,'1.0','all');
     }
     

@@ -2672,3 +2672,140 @@ button.swiper-pagination-bullet {
   display: none; }
 
 /*# sourceMappingURL=sourcemaps/main.css.map */
+
+
+/*=============================================
+=            header            =
+=============================================*/
+
+.content--nav-main li{
+  padding: 0 3px;
+}
+
+
+/*=====  End of header  ======*/
+
+
+
+
+
+
+/*=============================================
+=            Section comment block            =
+=============================================*/
+
+.content--illustrator-archive .content--featured-image{
+  background-size: cover !important;
+}
+
+.content--illustrator-archive .content{
+  padding: 0px;
+  padding-top: 20px;
+  border-top: solid #80808054;
+  border-width: 1px;
+  margin-top: 30px;
+  margin-bottom: 50px;
+}
+
+.content--awards .content--featured-image{
+  background-size: cover !important;
+}
+
+.content--awards .content{
+  padding: 0px;
+  border-width: 1px;
+  margin-bottom: 50px;
+  margin-top: 10px;
+}
+
+
+
+
+
+/*=====  End of Section comment block  ======*/
+
+
+
+/*=============================================
+=            Illustrator Gallery            =
+=============================================*/
+
+.customer-gallery__grid{
+  width: 100%;
+  max-width: 1170px;
+  margin: auto;
+}
+
+.illustrator-gallery h3{
+  width: 100%;
+  max-width: 1150px;
+  margin: auto;
+  font-weight: 700;
+  margin-bottom: 26px;
+  margin-top: 20px;
+}
+
+.customer-gallery__grid-item{
+
+  /* width: calc(33.3333%);
+  width: calc(50% - 5px);
+  margin:0 0% 0px; */
+
+  width: 47%;
+  margin:0 1% 22px;
+}
+
+.customer-gallery__grid-item img{
+  width: 100%;
+  filter: brightness(100%);
+  transition: 0.8s;
+}
+
+.illustrator-books{
+  width: 100%;
+  max-width: 1260px;
+  margin: auto;
+  padding: 0 28px;
+}
+
+.illustrator-books h3{
+  padding-left: 28px;
+  padding-top: 20px;
+  font-weight: 700;
+}
+
+.illustrator-books hr{
+  margin-left: 26px;
+  margin-right: 26px;
+  margin-top: 26px;
+  width: calc(100% - 52px);
+}
+
+.illustrator-books hr:last-child{
+  margin-top: 66px;
+
+}
+
+
+
+/*=====  End of Illustrator Gallery  ======*/
+
+
+/*=============================================
+=            Illustrator Interview            =
+=============================================*/
+
+.illustrator-interview{
+  max-width: 820px;
+  padding: 20px;
+  margin: auto;
+  padding-top: 50px;
+}
+
+/*=====  End of Illustrator Interview  ======*/
+
+
+
+
+
+
